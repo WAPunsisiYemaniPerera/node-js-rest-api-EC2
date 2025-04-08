@@ -4,8 +4,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon index.js",
-    "test": "echo \"Skipping tests for now\" && exit 0"
+    "start": "nodemon index.js"
+    
   },
   "keywords": [],
   "author": "",
