@@ -3,6 +3,16 @@ import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+export function getAllUsers(req,res){
+    User.find().then((users)=>{
+        res.json(users)
+    }).catch(()=>{
+        res.status(500).json({
+            message : "Users not found"
+        })
+    })
+}
+
 export function saveUser(req,res){
     //check if the user is an admin
     if(req.body.role == "admin"){
