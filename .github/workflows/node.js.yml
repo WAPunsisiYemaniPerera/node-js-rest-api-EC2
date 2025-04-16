@@ -52,10 +52,6 @@ jobs:
       - name: Restart App with PM2
         run: pm2 restart api
 
-      - name: View PM2 Logs
-        if: always()
-        run: pm2 logs --lines 100
-
 # Environment Variables (optional in prod)
       - name: Load Environment Variables
         run: |
