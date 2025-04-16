@@ -1,6 +1,10 @@
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
+import morgan from "morgan";
+import winston from "winston";
+
+import logger from './logger.js';
 import userRouter from "./routers/userRouter.js";
 import productRouter from "./routers/productRouter.js";
 import orderRouter from "./routers/orderRouter.js";
@@ -19,6 +23,28 @@ mongoose.connect("mongodb+srv://admin:123@cluster0.ldsnt.mongodb.net/?retryWrite
         console.log("Connection failed!");
     }
 )
+
+// Middleware: Logging
+app.use(morgan("dev")); // logs HTTP requests to console
+
+// Set up Winston logger
+const logger = winston.createLogger({
+    level: "info",
+    format: winston.format.simple(),
+    transports: [
+      new winston.transports.File({ filename: "logs/error.log", level: "error" }),
+      new winston.transports.File({ filename: "logs/combined.log" }),
+    ],
+  });
+  
+  // Example custom log
+  logger.info("App started");
+  
+  // Optional: Log errors
+  app.use((err, req, res, next) => {
+    logger.error(err.stack);
+    res.status(500).send("Something broke!");
+  });
 
 //middleware
 app.use(bodyParser.json());
@@ -39,6 +65,6 @@ app.get('/health', (req, res) => {
 
 //add a comment
 app.listen(4000,()=>{
-    console.log("Server is running on port 4000");
+    logger.info("Server is running on port 4000");
 })
   
