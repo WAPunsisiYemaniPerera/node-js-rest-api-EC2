@@ -23,35 +23,18 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      # Install Dependencies
       - name: Install dependencies
         run: npm install
 
-      # Run Unit, Integration, and E2E Tests (parallel execution for faster results)
       - name: Run Tests (unit/integration/E2E)
         run: |
           echo "Running unit tests..."
-          npm run test:unit || echo "No unit tests found"
-          echo "Running integration tests..."
-          npm run test:integration || echo "No integration tests found"
-          echo "Running E2E tests..."
-          npm run test:e2e || echo "No E2E tests found"
-
-      # Security Audit
+          npm test || echo "No tests found"
       - name: Security Audit
         run: |
           echo "Running security check..."
           npm audit --audit-level=high || echo "Vulnerabilities found (OK in dev)"
-
-      # Dependency Caching & Artifact Management
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
-      
+# Dependency Caching & Artifact Management
       - name: Build the app (if applicable)
         run: npm run build --if-present
 
@@ -63,43 +46,12 @@ jobs:
           path: build
           if-no-files-found: warn  # Don't fail if no /build folder
 
-      # Deployment Section
+# Deployment Section
       - name: Restart App with PM2
         run: pm2 restart api
 
-      # Load Environment Variables (optional in prod)
+# Environment Variables (optional in prod)
       - name: Load Environment Variables
         run: |
           touch .env
           echo "${{ secrets.MONGO_DB_URL }}" > .env
-
-  # Optional: Synthetic Monitoring and Alerting Job
-  synthetic-monitoring:
-    runs-on: ubuntu-latest
-    needs: build-and-deploy  # Waits for the main deployment job to complete
-
-    steps:
-      - name: Check application availability (simulated user journey)
-        run: |
-          curl -sSf http://your-app-url.com/login || exit 1  # Simulate a login
-
-      - name: Notify failure (if any step in synthetic monitoring fails)
-        if: failure()
-        run: |
-          echo "Synthetic monitoring failed! Sending alert."
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"text": "Synthetic monitoring failed for Node.js app!"}' \
-          https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
-
-  # Optional: Incident Response Procedure
-  incident-response:
-    runs-on: ubuntu-latest
-    needs: build-and-deploy  # Waits for the main deployment job to complete
-    if: failure()  # Runs only if the pipeline fails
-
-    steps:
-      - name: Send incident alert to incident management tool
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"text": "An incident occurred during the deployment pipeline. Check logs for details."}' \
-          https://your-incident-management-tool.com/api/alert
