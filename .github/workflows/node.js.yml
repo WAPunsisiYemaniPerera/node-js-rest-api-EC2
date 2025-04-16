@@ -17,92 +17,41 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Set up Node.js with cache enabled
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      # Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Run Unit, Integration, and E2E Tests (parallel execution)
       - name: Run Tests (unit/integration/E2E)
         run: |
           echo "Running unit tests..."
-          npm run test:unit || echo "No unit tests found"
-          echo "Running integration tests..."
-          npm run test:integration || echo "No integration tests found"
-          echo "Running E2E tests..."
-          npm run test:e2e || echo "No E2E tests found"
-
-      # Security Audit
-      - name: Run Security Audit
+          npm test || echo "No tests found"
+      - name: Security Audit
         run: |
           echo "Running security check..."
           npm audit --audit-level=high || echo "Vulnerabilities found (OK in dev)"
-
-      # Dependency Caching & Artifact Management
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
-      
-      # Build the application (if applicable)
+# Dependency Caching & Artifact Management
       - name: Build the app (if applicable)
         run: npm run build --if-present
 
-      # Upload the build artifacts (even if build fails)
       - name: Upload Build Artifacts
         if: always()  # Run even if build step fails
         uses: actions/upload-artifact@v4
         with:
           name: build-output-${{ matrix.node-version }}
           path: build
-          if-no-files-found: warn  # Don't fail if no /build folder exists
+          if-no-files-found: warn  # Don't fail if no /build folder
 
-      # Deployment Section
+# Deployment Section
       - name: Restart App with PM2
         run: pm2 restart api
 
-      # Load environment variables (optional)
+# Environment Variables (optional in prod)
       - name: Load Environment Variables
         run: |
           touch .env
           echo "${{ secrets.MONGO_DB_URL }}" > .env
-
-  # Optional: Synthetic Monitoring and Alerting Job
-  synthetic-monitoring:
-    runs-on: ubuntu-latest
-    needs: build-and-deploy  # Ensures this job runs after the deployment
-
-    steps:
-      - name: Check application availability (simulated user journey)
-        run: |
-          curl -sSf http://your-app-url.com/login || exit 1  # Simulate login page check
-
-      - name: Notify failure (if any step in synthetic monitoring fails)
-        if: failure()  # Send alert only if previous step fails
-        run: |
-          echo "Synthetic monitoring failed! Sending alert."
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"text": "Synthetic monitoring failed for Node.js app!"}' \
-          https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
-
-  # Optional: Incident Response Procedure (runs if the build-and-deploy job fails)
-  incident-response:
-    runs-on: ubuntu-latest
-    needs: build-and-deploy  # Waits for the main deployment job to complete
-    if: failure()  # Executes only if the pipeline fails
-
-    steps:
-      - name: Send incident alert to incident management tool
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"text": "An incident occurred during the deployment pipeline. Check logs for details."}' \
-          https://your-incident-management-tool.com/api/alert
