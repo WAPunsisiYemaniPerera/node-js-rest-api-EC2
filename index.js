@@ -32,14 +32,13 @@ app.use("/api/user",userRouter);
 app.use("/api/product",productRouter);
 app.use("/api/order",orderRouter);
 
+//A small route to check if the app is alive...
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: "ok" });
+  });
 
 //add a comment
 app.listen(4000,()=>{
     console.log("Server is running on port 4000");
 })
-
-//A small route to check if the app is alive...
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: "ok" });
-  });
   
