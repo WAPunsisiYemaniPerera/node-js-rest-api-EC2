@@ -36,24 +36,27 @@ jobs:
           echo "Running security check..."
           npm audit --audit-level=high || echo "Vulnerabilities found (OK in dev)"
 
-#Dependency Caching & Artifact Management
+# Dependency Caching & Artifact Management
       - name: Build the app (if applicable)
         run: npm run build --if-present
 
       - name: Upload Build Artifacts
-        if: success()
+        if: always()  # Run even if build step fails
         uses: actions/upload-artifact@v4
         with:
           name: build-output-${{ matrix.node-version }}
-          path: |
-            build
+          path: build
+          if-no-files-found: warn  # Don't fail if no /build folder
 
+# Deployment Section
       - name: Restart App with PM2
         run: pm2 restart api
 
       - name: View PM2 Logs
+        if: always()
         run: pm2 logs --lines 100
 
+# Environment Variables (optional in prod)
       - name: Load Environment Variables
         run: |
           touch .env
