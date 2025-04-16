@@ -44,7 +44,7 @@ jobs:
           echo "Running security check..."
           npm audit --audit-level=high || echo "Vulnerabilities found (OK in dev)"
 
-      # Optional: Dependency Caching (You can modify if you need to cache specific files)
+      # Dependency Caching & Artifact Management
       - name: Cache dependencies
         uses: actions/cache@v2
         with:
@@ -52,10 +52,29 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-modules-
+      
+      # Build the application (if applicable)
+      - name: Build the app (if applicable)
+        run: npm run build --if-present
 
-      # Optional: Deployment Section (only if your app is being deployed)
+      # Upload the build artifacts (even if build fails)
+      - name: Upload Build Artifacts
+        if: always()  # Run even if build step fails
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output-${{ matrix.node-version }}
+          path: build
+          if-no-files-found: warn  # Don't fail if no /build folder exists
+
+      # Deployment Section
       - name: Restart App with PM2
         run: pm2 restart api
+
+      # Load environment variables (optional)
+      - name: Load Environment Variables
+        run: |
+          touch .env
+          echo "${{ secrets.MONGO_DB_URL }}" > .env
 
   # Optional: Synthetic Monitoring and Alerting Job
   synthetic-monitoring:
