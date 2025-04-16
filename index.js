@@ -37,3 +37,9 @@ app.use("/api/order",orderRouter);
 app.listen(4000,()=>{
     console.log("Server is running on port 4000");
 })
+
+//A small route to check if the app is alive...
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: "ok" });
+  });
+  
