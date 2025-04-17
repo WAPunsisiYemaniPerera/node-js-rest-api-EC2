@@ -50,6 +50,4 @@ app.get('/health', (req, res) => {
 });
 
 // Start server
-app.listen(4000, () => {
-    logger.info("Server is running on port 4000");
-});
+export default app;
