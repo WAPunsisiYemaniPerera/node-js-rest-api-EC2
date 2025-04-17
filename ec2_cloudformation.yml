@@ -20,12 +20,6 @@ Resources:
           apt-get update -y
           apt-get install -y nodejs npm
           npm install -g pm2
-          # Add the private key
-          mkdir -p /home/ubuntu/.ssh
-          echo "${!PrivateKey}" > /home/ubuntu/.ssh/id_rsa
-          chmod 400 /home/ubuntu/.ssh/id_rsa
-          chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa
-
           # CI/CD configurations (example)
           apt-get install -y git
           # Add your CI/CD script here
@@ -38,7 +32,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 0.0.0.0/0
+          CidrIp: 45.121.88.211/32
 Outputs:
   InstancePublicIp:
     Description: "The public IP of the EC2 instance"
