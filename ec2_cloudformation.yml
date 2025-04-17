@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CloudFormation template for an EC2 instance with PM2 and CI/CD configurations"
+Parameters:
+  PrivateKey:
+    Type: String
+    Description: "The RSA private key to access the EC2 instance"
+    NoEcho: true
+Resources:
+  EC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: "ami-0c55b985cb0c039a9"  
+      InstanceType: "t2.micro"
+      KeyName: "i-08bb2ad76f09bfc03" 
+      SecurityGroups:
+        - !Ref 'InstanceSecurityGroup'
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          apt-get update -y
+          apt-get install -y nodejs npm
+          npm install -g pm2
+          # Add the private key
+          mkdir -p /home/ubuntu/.ssh
+          echo "${!PrivateKey}" > /home/ubuntu/.ssh/id_rsa
+          chmod 400 /home/ubuntu/.ssh/id_rsa
+          chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa
+
+          # CI/CD configurations (example)
+          apt-get install -y git
+          # Add your CI/CD script here
+  InstanceSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupName: "instance-security-group"
+      GroupDescription: "Enable SSH access via port 22"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+Outputs:
+  InstancePublicIp:
+    Description: "The public IP of the EC2 instance"
+    Value: !GetAtt EC2Instance.PublicIp
