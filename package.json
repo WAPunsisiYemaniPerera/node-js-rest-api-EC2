@@ -1,6 +1,6 @@
 {
   "name": "crystel-beauty-clear-backend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -9,12 +9,18 @@
     "test:unit": "jest",
     "test:integration": "jest --config=integration.config.js",
     "test:e2e": "cypress run",
-    "audit": "npm audit --audit-level=high"
+    "audit": "npm audit --audit-level=high",
+    "release": "standard-version"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
@@ -26,7 +32,11 @@
     "winston": "^3.17.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
     "cypress": "^14.3.0",
-    "jest": "^29.7.0"
+    "husky": "^9.1.7",
+    "jest": "^29.7.0",
+    "standard-version": "^9.5.0"
   }
 }
