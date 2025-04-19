@@ -1,6 +1,6 @@
 import Order from "../models/order.js";
 
-export function createOrder(req,res){
+export async function createOrder(req,res){
 
     if (req.user == null) {
         res.status(401).json({
@@ -14,19 +14,42 @@ export function createOrder(req,res){
     //the user do not need to send the email, because it is 
     // already in the token
     const orderData = {
-        orderId : "",
-        email : req.user.email,
-        name : body.name,
-        address : body.address,
-        phoneNumber : body.phoneNumber,
-        billItems : [],
-        total : 0
+        orderId: "",
+        email: req.user.email,
+        name: body.name,
+        address: body.address, // Default address, will be updated below
+        phoneNumber: body.phoneNumber,
+        billItems: [],
+        total: 0
+    };
+
+    // If addressIndex is provided, use the address from the user's saved addresses
+    if (body.addressIndex !== undefined && body.addressIndex >= 0) {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (body.addressIndex < user.addresses.length) {
+            orderData.address = user.addresses[body.addressIndex];
+        } else {
+            return res.status(400).json({ message: 'Invalid address index' });
+        }
     }
+
+    // Calculate total price
+    let totalPrice = 0;
+    if (body.billItems && Array.isArray(body.billItems)) {
+        body.billItems.forEach(item => {
+            totalPrice += item.price * item.quantity;
+        });
+    }
+    orderData.total = totalPrice;
 
     //generate the order id for the order
     Order.find()
     .sort({
-        date : -1 //last date first
+        date: -1 //last date first
     }).limit(1).then((lastBills)=>{
         //if there are no orders
         if(lastBills.length == 0){
@@ -114,5 +137,24 @@ export function getOrders(req,res){
                 })
             }
         )
+    }
+}
+
+export async function updateOrderStatus(req, res) {
+    if (req.user == null || req.user.role !== "admin") {
+        return res.status(403).json({ message: "You are not authorized to update order status" });
+    }
+
+    const orderId = req.params.id;
+    const newStatus = req.body.status;
+
+    try {
+        const order = await Order.findByIdAndUpdate(orderId, { status: newStatus }, { new: true });
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+        res.json({ message: "Order status updated successfully", order: order });
+    } catch (err) {
+        res.status(500).json({ message: "Failed to update order status", error: err });
     }
 }

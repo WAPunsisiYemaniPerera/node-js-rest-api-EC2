@@ -44,18 +44,38 @@ export async function createProduct(req,res){
     }
 }
 
-export function getProducts(req,res){
-    Product.find().then(
-        (products)=>{
-            res.json(products)
-        }
-    ).catch(
-        (err)=>{
-            res.status(500).json({
-                message : "Products not found"
-            })
-        }
-    )
+const defaultProducts = [
+  {
+    name: 'Matte Touch Lipstick',
+    description: 'Our paraben free lip products will feels like a whisper of luxury and elegance.',
+    image: 'https://example.com/lipstick.jpg'
+  },
+  {
+    name: 'Fashion Nail Polish',
+    description: 'The only 21 Toxin Free Nail Polish in Sri Lanka, now in over 50 colours.',
+    image: 'https://example.com/nailpolish.jpg'
+  },
+  {
+    name: 'Hair Thickening & Volumizing',
+    description: 'The secret weapon to transform your locks from limp to lavish.',
+    image: 'https://example.com/hairproduct.jpg'
+  }
+];
+
+export async function getProducts(req,res){
+  try {
+    let products = await Product.find();
+    if (products.length === 0) {
+      // If no products exist, create the default products
+      await Product.insertMany(defaultProducts);
+      products = await Product.find(); // Retrieve the newly created products
+    }
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({
+      message: "Products not found"
+    });
+  }
 }
 
 export function deleteProduct(req,res){

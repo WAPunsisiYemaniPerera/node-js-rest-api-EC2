@@ -28,12 +28,15 @@ const userSchema = new mongoose.Schema({
         required: true,
         default: "Not given"
     },
+    addresses: [{
+        type: String
+    }],
     isDisabled: {
-        type: Boolean,   
+        type: Boolean,
         default: false
     },
     isEmailVerified: {
-        type: Boolean,   
+        type: Boolean,
         default: false
     }
 });

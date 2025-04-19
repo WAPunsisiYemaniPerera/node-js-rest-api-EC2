@@ -7,6 +7,7 @@ import logger from './logger.js'; // imported logger
 import userRouter from "./routers/userRouter.js";
 import productRouter from "./routers/productRouter.js";
 import orderRouter from "./routers/orderRouter.js";
+import reviewRouter from "./routers/reviewRouter.js";
 import verifyJWT from "./middleware/auth.js";
 
 //dependency
@@ -43,6 +44,7 @@ app.use(verifyJWT);
 app.use("/api/user", userRouter);
 app.use("/api/product", productRouter);
 app.use("/api/order", orderRouter);
+app.use("/api/review", reviewRouter);
 
 // A small route to check if the app is alive...
 app.get('/health', (req, res) => {

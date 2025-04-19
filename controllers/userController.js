@@ -109,3 +109,87 @@ export function loginUser(req,res){
         }
     })
 }
+
+export async function addAddress(req, res) {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.addresses.push(req.body.address);
+        await user.save();
+
+        res.status(200).json({ message: 'Address added successfully', addresses: user.addresses });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to add address', error: error.message });
+    }
+}
+
+export async function updateAddress(req, res) {
+     try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+         // Assuming you pass the index of the address to update in the request body
+        const addressIndex = req.body.index;
+
+        if (addressIndex === undefined || addressIndex < 0 || addressIndex >= user.addresses.length) {
+            return res.status(400).json({ message: 'Invalid address index' });
+        }
+
+        user.addresses[addressIndex] = req.body.newAddress;
+        await user.save();
+
+        res.status(200).json({ message: 'Address updated successfully', addresses: user.addresses });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to update address', error: error.message });
+    }
+}
+
+export async function deleteAddress(req, res) {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Assuming you pass the index of the address to delete in the request body
+        const addressIndex = req.body.index;
+
+        if (addressIndex === undefined || addressIndex < 0 || addressIndex >= user.addresses.length) {
+            return res.status(400).json({ message: 'Invalid address index' });
+        }
+
+        user.addresses.splice(addressIndex, 1);
+        await user.save();
+
+        res.status(200).json({ message: 'Address deleted successfully', addresses: user.addresses });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to delete address', error: error.message });
+    }
+}
+
+export function blockUser(req, res) {
+    if (req.user == null || req.user.role !== "admin") {
+        return res.status(403).json({ message: "You are not authorized to block users" });
+    }
+
+    const userId = req.params.id;
+
+    User.findByIdAndUpdate(userId, { isDisabled: true }, { new: true })
+        .then(user => {
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+            res.json({ message: "User blocked successfully" });
+        })
+        .catch(err => {
+            res.status(500).json({ message: "Failed to block user", error: err });
+        });
+}
