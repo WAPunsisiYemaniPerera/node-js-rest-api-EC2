@@ -52,6 +52,7 @@ jobs:
 
   deploy:
     needs: [test, security-scan]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js 20.x
