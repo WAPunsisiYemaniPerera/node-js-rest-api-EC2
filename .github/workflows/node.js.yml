@@ -19,10 +19,14 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+      - name: Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - run: npm ci
-      - name: Install @eslint/config-helpers
-        run: npm install --save-dev @eslint/config-helpers
-
       - name: Run unit tests
         run: npm run test:unit
       - name: Run integration tests
