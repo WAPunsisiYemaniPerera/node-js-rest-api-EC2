@@ -19,7 +19,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: npm ci
+      - run: npm ci --include=@eslint/config-helpers
+
       - name: Run unit tests
         run: npm run test:unit
       - name: Run integration tests
