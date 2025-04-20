@@ -2,7 +2,7 @@
   "name": "crystel-beauty-clear-backend",
   "version": "1.0.1",
   "main": "index.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "nodemon index.js",
     "build": "echo 'No build step required'",
