@@ -1,27 +1,22 @@
-# Contributing to Crystel Beauty Clear Backend
-
-We welcome contributions to the Crystel Beauty Clear Backend project!
-
+# Contributing to AuraBelle	AuraBelle project! Follow these guidelines to ensure a smooth contribution process.
+	
 ## How to Contribute
-
-1.  Fork the repository.
-2.  Create a new branch for your feature or bug fix.
-3.  Make your changes and commit them with clear, concise commit messages following the Conventional Commits specification.
-4.  Test your changes thoroughly.
-5.  Submit a pull request.
+1. Fork the repository and clone it locally.
+2. Create a new branch for your changes (`git checkout -b feature/your-feature`).
+3. Follow the [Conventional Commits](https://www.conventionalcommits.org/) format for commit messages.
+4. Write clear, concise code and include tests where applicable.
+5. Update documentation if your changes affect the codebase or setup.
+6. Push your branch and create a pull request (PR) using the provided template.
+7. Ensure all CI/CD checks pass and address reviewer feedback.
 
 ## Code Style
+- Use ESLint and Prettier for JavaScript/React code.
+- Follow MongoDB schema conventions for models.
+- Include comments for complex logic.
+	
+## Reporting Issues
+- Use the issue templates for bugs, features, or technical debt.
+- Provide detailed descriptions and reproduction steps.
 
-Please follow the code style guidelines used in this project.
-
-## Commit Messages
-
-Please use the Conventional Commits specification for your commit messages.
-
-## Pull Requests
-
-Please provide a clear and concise description of your changes in the pull request.
-
-## License
-
-By contributing to this project, you agree to license your contributions under the MIT License.
+## Questions?
+Contact [https://github.com/WAPunsisiYemaniPerera] via GitHub Issues.
