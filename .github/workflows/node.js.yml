@@ -31,6 +31,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Install ESLint globally
+        run: npm install -g eslint
       - name: Run ESLint
         run: npm run lint
 
