@@ -11,7 +11,7 @@
     "test:e2e": "cypress run",
     "audit": "npm audit --audit-level=high",
     "release": "standard-version",
-    "test": "jest"
+    "test": "jest --maxWorkers=2"
   },
   "keywords": [],
   "author": "",
