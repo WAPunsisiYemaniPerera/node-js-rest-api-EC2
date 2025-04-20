@@ -1,0 +1,51 @@
+name: SLA Monitoring
+
+on:
+  issues:
+    types:
+      - labeled
+      - closed
+
+jobs:
+  sla_monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Get issue creation time
+        id: creation_time
+        run: |
+          echo "creation_time=$(date -u -d \"${{ github.event.issue.created_at }}\" +%s)" >> $GITHUB_OUTPUT
+      - name: Get issue closed time
+        id: closed_time
+        if: github.event.issue.state == 'closed'
+        run: |
+          echo "closed_time=$(date -u -d \"${{ github.event.issue.closed_at }}\" +%s)" >> $GITHUB_OUTPUT
+      - name: Calculate SLA
+        id: sla
+        if: github.event.issue.state == 'closed'
+        run: |
+          creation_time=${{ steps.creation_time.outputs.creation_time }}
+          closed_time=${{ steps.closed_time.outputs.closed_time }}
+          sla=$(( (closed_time - creation_time) / 3600 ))
+          echo "sla=$sla hours" >> $GITHUB_OUTPUT
+      - name: Post SLA to issue
+        uses: actions/github-script@v6
+        if: github.event.issue.state == 'closed'
+        with:
+          script: |
+            const github = require('@actions/github');
+            const context = github.context;
+            const sla = ${{ steps.sla.outputs.sla }};
+            const issue_number = context.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            await github.getOctokit('GITHUB_TOKEN').rest.issues.createComment({
+              owner: owner,
+              repo: repo,
+              issue_number: issue_number,
+              body: `Issue resolved in ${sla} hours`
+            });
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
