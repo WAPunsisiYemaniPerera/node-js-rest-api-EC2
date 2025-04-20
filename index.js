@@ -14,7 +14,7 @@ import verifyJWT from "./middleware/auth.js";
 const app = express();
 
 //mongodb+srv://admin:123@cluster0.ldsnt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-mongoose.connect("mongodb+srv://admin:123@cluster0.ldsnt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0").then(
+mongoose.connect(process.env.MONGO_DB_URL).then(
     ()=> {
         console.log("Connected to the database");
     }
