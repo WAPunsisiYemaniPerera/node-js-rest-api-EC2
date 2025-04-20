@@ -46,7 +46,6 @@ jobs:
       - name: Run SonarCloud scan
         env:
           SONAR_PROJECTKEY: crystel-beauty-clear-backend
-          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
           SONAR_HOST_URL: https://sonarcloud.io
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         uses: SonarSource/sonarqube-scan-action@master
