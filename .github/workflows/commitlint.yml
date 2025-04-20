@@ -10,3 +10,5 @@ jobs:
       - uses: wagoid/commitlint-github-action@v5
         with:
           configFile: ./commitlint.config.cjs
+        env:
+          INPUT_CONFIGFILE: ./commitlint.config.cjs
