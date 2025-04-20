@@ -44,12 +44,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run SonarCloud scan
-        uses: SonarSource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io
-          sonar.organization: ${{ secrets.SONAR_ORGANIZATION }}
-          sonar.projectKey: crystel-beauty-clear-backend
+        run: |
+          echo "sonar.projectKey=crystel-beauty-clear-backend" >> sonar-project.properties
+          echo "sonar.organization=${{ secrets.SONAR_ORGANIZATION }}" >> sonar-project.properties
+          echo "sonar.host.url=https://sonarcloud.io" >> sonar-project.properties
+          echo "sonar.token=${{ secrets.SONAR_TOKEN }}" >> sonar-project.properties
+      - uses: SonarSource/sonarqube-scan-action@master
 
   deploy:
     needs: [test, security-scan]
