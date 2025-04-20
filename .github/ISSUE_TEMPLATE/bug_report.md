@@ -3,44 +3,28 @@ name: Bug report
 about: Create a report to help us improve
 title: "[BUG] - "
 labels: bug
-assignees:
+assignees: [https://github.com/WAPunsisiYemaniPerera]
 
 ---
 
-**Describe the bug**
+## Description
+Describe the bug in detail.
 
-A clear and concise description of what the bug is.
+## Steps to Reproduce
+1. Go to '...'
+2. Click on '...'
+3. See error
 
-**To Reproduce**
+## Expected Behavior
+What should happen?
 
-Steps to reproduce the behavior:
+## Actual Behavior
+What happens instead?
 
-1.  Go to '...'
-2.  Click on '...'
-3.  Scroll down to '...'
-4.  See error
+## Environment
+- Browser: [e.g., Chrome, Firefox]
+- Node.js version: [e.g., 16.x]
+- OS: [e.g., Windows 10, Ubuntu]
 
-**Expected behavior**
-
-A clear and concise description of what you expected to happen.
-
-**Screenshots**
-
-If applicable, add screenshots to help explain your problem.
-
-**Desktop (please complete the following information):**
-
-- OS: [e.g. iOS]
-- Browser [e.g. chrome, safari]
-- Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
-
-- Device: [e.g. iPhone6]
-- OS: [e.g. iOS8.1]
-- Browser [e.g. stock browser, safari]
-- Version [e.g. 22]
-
-**Additional context**
-
-Add any other context about the problem here.
+## Additional Context
+Any other relevant information.
