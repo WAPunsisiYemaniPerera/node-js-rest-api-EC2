@@ -43,10 +43,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Install ESLint globally
-        run: npm install -g eslint
-      - name: Run ESLint
-        run: npm run lint
+      - name: Run SonarCloud scan
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+          sonar.organization: ${{ secrets.SONAR_ORGANIZATION }}
 
   deploy:
     needs: [test, security-scan]
