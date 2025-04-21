@@ -49,6 +49,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
           sonar.organization: ${{ secrets.SONAR_ORGANIZATION }}
+          sonar.projectKey: WAPunsisiYemaniPerera_node-js-rest-api-EC2
 
   deploy:
     needs: [test, security-scan]
