@@ -43,14 +43,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Run SonarCloud scan
-        uses: SonarSource/sonarqube-scan-action@master
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: .
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
-          sonar.organization: ${{ secrets.SONAR_ORGANIZATION }}
-          # Updated SonarQube configuration
-          sonar.projectKey: WAPunsisiYemaniPerera_node-js-rest-api-EC2
+          SONAR_PROJECT_KEY: WAPunsisiYemaniPerera_node-js-rest-api-EC2
+          SONAR_ORGANIZATION: wapunsisiyemaniperera
 
   deploy:
     needs: [test, security-scan]
