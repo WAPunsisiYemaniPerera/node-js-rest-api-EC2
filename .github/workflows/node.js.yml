@@ -55,17 +55,17 @@ jobs:
           node-version: 20.x
       - name: Run SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=WAPunsisiYemaniPerera_node-js-rest-api-EC2
+            -Dsonar.organization=wapunsisiyemaniperera
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.coverage.exclusions=**/test/**,**/mock/**
+          scannerVersion: 7.1.0.4889
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    with:
-      projectBaseDir: .
-      args: >
-        -Dsonar.projectKey=WAPunsisiYemaniPerera_node-js-rest-api-EC2
-        -Dsonar.organization=wapunsisiyemaniperera
-        -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-        -Dsonar.qualitygate.wait=true
-        -Dsonar.coverage.exclusions=**/test/**,**/mock/**
-      scannerVersion: 7.1.0.4889
 
   deploy:
     needs: [test, security-scan]
