@@ -23,7 +23,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-${{ github.run_id }}
           restore-keys: |
             ${{ runner.os }}-node-
       - run: npm ci
@@ -43,13 +43,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Run SonarCloud scan
-        uses: SonarSource/sonarqube-scan-action@master
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: c:/Users/3C Tech/Desktop/project/crystel-beauty-clear-backend
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: 7a96e047e7bea982c61a40f7163cf50797ca2422
           SONAR_HOST_URL: https://sonarcloud.io
-          sonar.organization: ${{ secrets.SONAR_ORGANIZATION }}
-          sonar.projectKey: WAPunsisiYemaniPerera_node-js-rest-api-EC2
+          SONAR_PROJECT_KEY: WAPunsisiYemaniPerera_node-js-rest-api-EC2
+          SONAR_ORGANIZATION: wapunsisiyemaniperera
 
   deploy:
     needs: [test, security-scan]
