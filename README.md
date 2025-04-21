@@ -71,4 +71,4 @@ The template defines the following outputs:
 
 The `UserData` section includes example CI/CD configurations. You can customize this section to include your specific CI/CD scripts.
 
-**Note:** I still need the AWS region (e.g., us-east-1) and output format (e.g., json) to configure the AWS CLI and deploy the CloudFormation template.
+**Note:** I still need the AWS region (e.g., us-east-1) and output format (e.g., json) to configure the AWS CLI and deploy the CloudFormation template....
