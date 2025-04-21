@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Node.js CI/CD Pipeline
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
         node-version: [18.x, 20.x]  
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -22,43 +22,55 @@ jobs:
       - name: Cache Dependencies
         uses: actions/cache@v3
         with:
-          path: ${{ github.workspace }}/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-${{ github.run_id }}
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
       - run: npm ci
       - name: Run unit tests
-        run: npm run test:unit
+        run: npm run test:unit -- --coverage
       - name: Run integration tests
         run: npm run test:integration
       - name: Run e2e tests
         run: npm run test:e2e
       - name: Upload test results
         uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: test-results
-          path: test-results
+          name: test-results-${{ matrix.node-version }}
+          path: |
+            coverage/
+            test-results/
 
   security-scan:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Run SonarCloud scan
-        uses: SonarSource/sonarcloud-github-action@master
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          projectBaseDir: c:/Users/3C Tech/Desktop/project/crystel-beauty-clear-backend
+          node-version: 20.x
+      - name: Run SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
         env:
-          SONAR_TOKEN: 7a96e047e7bea982c61a40f7163cf50797ca2422
-          SONAR_HOST_URL: https://sonarcloud.io
-          SONAR_PROJECT_KEY: WAPunsisiYemaniPerera_node-js-rest-api-EC2
-          SONAR_ORGANIZATION: wapunsisiyemaniperera
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=WAPunsisiYemaniPerera_node-js-rest-api-EC2
+            -Dsonar.organization=wapunsisiyemaniperera
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.coverage.exclusions=**/test/**,**/mock/**
 
   deploy:
     needs: [test, security-scan]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js 20.x
         uses: actions/setup-node@v3
         with:
@@ -68,10 +80,14 @@ jobs:
       - name: Set up environment variables
         run: |
           echo "MONGO_DB_URL=${{ secrets.MONGO_DB_URL }}" >> $GITHUB_ENV
+          echo "NODE_ENV=production" >> $GITHUB_ENV
       - name: Build the project
         run: npm run build
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
         with:
-          name: build
-          path: dist/
+          script: |
+            cd /var/www/your-app
+            git pull origin main
+            npm ci --production
+            pm2 restart all
