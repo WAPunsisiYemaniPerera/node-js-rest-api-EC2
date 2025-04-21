@@ -47,9 +47,9 @@ jobs:
       - name: Run SonarCloud scan
         uses: SonarSource/sonarcloud-github-action@master
         with:
-          projectBaseDir: .
+          projectBaseDir: c:/Users/3C Tech/Desktop/project/crystel-beauty-clear-backend
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: 7a96e047e7bea982c61a40f7163cf50797ca2422
           SONAR_HOST_URL: https://sonarcloud.io
           SONAR_PROJECT_KEY: WAPunsisiYemaniPerera_node-js-rest-api-EC2
           SONAR_ORGANIZATION: wapunsisiyemaniperera
