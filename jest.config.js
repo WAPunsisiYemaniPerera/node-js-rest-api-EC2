@@ -1,5 +1,4 @@
 module.exports = {
-  maxWorkers: "50%",
   collectCoverage: true,
   coverageDirectory: "coverage",
   coverageReporters: ["lcov", "text-summary"],
