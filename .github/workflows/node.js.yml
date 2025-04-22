@@ -32,14 +32,27 @@ jobs:
       - name: Run unit tests
         run: npm run test:unit -- --coverage
       - name: Run integration tests
-        run: npm run test:integration
+        run: npm run test:integration -- --coverage
       - name: Run e2e tests
-        run: npm run test:e2e
+        run: npm run test:e2e -- --coverage
+<<<<<<< HEAD
+=======
+      - name: Verify coverage file
+        run: |
+          if [ ! -f "coverage/lcov.info" ]; then
+            echo "❌ Coverage file not found!"
+            ls -la coverage/ || echo "No coverage directory"
+            exit 1
+          else
+            echo "✅ Coverage file exists"
+            head -n 5 coverage/lcov.info
+          fi
+>>>>>>> f0988c7c12603e6989179829ebe35f521d506518
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
-
+          path: coverage
   security-scan:
     needs: test
     runs-on: ubuntu-latest
@@ -51,17 +64,17 @@ jobs:
           node-version: 20.x
       - name: Run SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=WAPunsisiYemaniPerera_node-js-rest-api-EC2
+            -Dsonar.organization=wapunsisiyemaniperera
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.coverage.exclusions=**/test/**,**/mock/**
+          scannerVersion: 7.1.0.4889
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    with:
-      projectBaseDir: .
-      args: >
-        -Dsonar.projectKey=WAPunsisiYemaniPerera_node-js-rest-api-EC2
-        -Dsonar.organization=wapunsisiyemaniperera
-        -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-        -Dsonar.qualitygate.wait=true
-        -Dsonar.coverage.exclusions=**/test/**,**/mock/**
-      scannerVersion: 7.1.0.4889
 
   deploy:
     needs: [test, security-scan]
