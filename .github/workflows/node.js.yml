@@ -56,6 +56,7 @@ jobs:
           args: >
             -Dsonar.projectKey=WAPunsisiYemaniPerera_node-js-rest-api-EC2
             -Dsonar.organization=wapunsisiyemaniperera
+            -Dsonar.projectBaseDir=.
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.qualitygate.wait=true
             -Dsonar.coverage.exclusions=**/test/**,**/mock/**
