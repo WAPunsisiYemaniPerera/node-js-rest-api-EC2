@@ -30,7 +30,7 @@ jobs:
             ${{ runner.os }}-node-
       - run: npm ci
       - name: Run unit tests
-        run: npm run test:unit -- --coverage
+        run: npm run test:unit -- --coverage --config jest.config.cjs
       - name: Run integration tests
         run: npm run test:integration -- --coverage
       - name: Run e2e tests
