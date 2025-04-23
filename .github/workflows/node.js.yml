@@ -30,6 +30,8 @@ jobs:
             ${{ runner.os }}-node-
       - run: npm ci
       - name: Run unit tests
+        env:
+          JEST_CONFIG: jest.config.cjs
         run: npm run test:unit -- --coverage
       - name: Run integration tests
         run: npm run test:integration -- --coverage
