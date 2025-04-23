@@ -8,6 +8,9 @@ import userRouter from "./routers/userRouter.js";
 import productRouter from "./routers/productRouter.js";
 import orderRouter from "./routers/orderRouter.js";
 import reviewRouter from "./routers/reviewRouter.js";
+import dotenv from 'dotenv';
+dotenv.config();
+
 import verifyJWT from "./middleware/auth.js";
 
 //dependency
