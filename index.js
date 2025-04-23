@@ -55,4 +55,9 @@ app.get('/health', (req, res) => {
 });
 
 // Start server
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
 export default app;
